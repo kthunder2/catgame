@@ -11,6 +11,10 @@ public class CharacterAnimationController : MonoBehaviour
     private Vector3 targetPosition;
     private bool isMoving = false;
 
+    // New flags
+    private bool manualMovementEnabled = false;
+    private bool autoMovementEnabled = true;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -19,9 +23,18 @@ public class CharacterAnimationController : MonoBehaviour
 
     void Update()
     {
+        if (manualMovementEnabled)
+        {
+            CheckMouseClickRaycast();
+        }
+
+        if (autoMovementEnabled)
+        {
+            HandleAutomaticMovement(); // You should have your auto movement logic here
+        }
+
         HandleMovement();
         HandleAnimation();
-        CheckMouseClickRaycast(); // Check for PolygonCollider2D at mouse click
     }
 
     void HandleMovement()
@@ -54,14 +67,13 @@ public class CharacterAnimationController : MonoBehaviour
         {
             Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            // Check if there is a PolygonCollider2D at the mouse position
             Collider2D hitCollider = Physics2D.OverlapPoint(mouseWorldPos);
 
             if (hitCollider == null)
             {
                 Debug.Log("Mouse click did not hit any collider, character will not move");
             }
-            else if(Shop.instance.isMenuOpen)
+            else if (Shop.instance.isMenuOpen)
             {
                 Debug.Log("Shop menu is open, character will not move");
             }
@@ -69,23 +81,36 @@ public class CharacterAnimationController : MonoBehaviour
             {
                 Debug.Log("It's an obstacle!");
             }
+            else if (hitCollider is PolygonCollider2D)
+            {
+                Debug.Log("Mouse clicked on a 2D PolygonCollider2D: " + hitCollider.name);
+                targetPosition = new Vector3(mouseWorldPos.x, mouseWorldPos.y, transform.position.z);
+                isMoving = true;
+            }
             else
             {
-                if (hitCollider != null && hitCollider is PolygonCollider2D)
-                {
-                    Debug.Log("Mouse clicked on a 2D PolygonCollider2D: " + hitCollider.name);
-
-                    // Only move if a polygon collider was hit
-                    targetPosition = new Vector3(mouseWorldPos.x, mouseWorldPos.y, transform.position.z);
-                    isMoving = true;
-                }
-                else
-                {
-                    Debug.Log("Mouse click did not hit a PolygonCollider2D, character will not move");
-                }
+                Debug.Log("Mouse click did not hit a PolygonCollider2D, character will not move");
             }
-
-            
         }
+    }
+
+    // Button functions
+    public void EnableManualMovement()
+    {
+        manualMovementEnabled = true;
+        autoMovementEnabled = false;
+        Debug.Log("Manual movement enabled, automatic movement disabled");
+    }
+
+    public void EnableAutomaticMovement()
+    {
+        manualMovementEnabled = false;
+        autoMovementEnabled = true;
+        Debug.Log("Automatic movement enabled, manual movement disabled");
+    }
+
+    void HandleAutomaticMovement()
+    {
+        // Your auto movement logic here
     }
 }
