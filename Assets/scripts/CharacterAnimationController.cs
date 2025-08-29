@@ -105,15 +105,13 @@ public class CharacterAnimationController : MonoBehaviour
                 // Decide if we stay idle this interval
                 if (Random.value > idleChance)
                 {
-                    // Pick a random point in camera bounds
-                    Vector2 randomScreenPoint = new Vector2(
-                        Random.Range(0, Screen.width),
-                        Random.Range(0, Screen.height)
-                    );
-                    Vector2 worldPoint = Camera.main.ScreenToWorldPoint(randomScreenPoint);
-
+                    // Pick a random point around the character within radius 1
+                    Vector2 pos = transform.position;
+                    Vector2 randomOffset = Random.insideUnitCircle;
+                    Vector2 candidatePosition = pos + randomOffset;
+                    
                     // Try set as target (only if PolygonCollider2D and valid)
-                    TrySetTarget(worldPoint);
+                    TrySetTarget(candidatePosition);
                 }
                 else
                 {
@@ -124,6 +122,7 @@ public class CharacterAnimationController : MonoBehaviour
             yield return new WaitForSeconds(autoMoveInterval);
         }
     }
+
 
     // --- Button functions ---
     public void EnableManualMovement()
