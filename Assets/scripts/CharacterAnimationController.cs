@@ -57,7 +57,11 @@ public class CharacterAnimationController : MonoBehaviour
             // Check if there is a PolygonCollider2D at the mouse position
             Collider2D hitCollider = Physics2D.OverlapPoint(mouseWorldPos);
 
-            if (hitCollider.gameObject.CompareTag("Obstacle"))
+            if (hitCollider == null)
+            {
+                Debug.Log("Mouse click did not hit any collider, character will not move");
+            }
+            else if (hitCollider.gameObject.CompareTag("Obstacle"))
             {
                 Debug.Log("It's an obstacle!");
             }
