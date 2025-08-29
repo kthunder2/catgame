@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class SpawnAndEnable : MonoBehaviour
@@ -8,6 +9,10 @@ public class SpawnAndEnable : MonoBehaviour
     [Header("Object to enable")]
     public GameObject buttons;
 
+    private Vector3 targetPosition;
+
+    private bool placementMode = false; // Is the player currently placing?
+
     // Call this function, e.g., from a UI Button OnClick
     public void SpawnBoughtItem()
     {
@@ -15,6 +20,7 @@ public class SpawnAndEnable : MonoBehaviour
         {
             // Instantiate at position (1, -1, 0) with default rotation
             Instantiate(objectToSpawn, new Vector3(1f, -1f, 0f), Quaternion.identity);
+            Shop.instance.ToggleShopMenu(); // Close the shop menu after buying
         }
 
         if (buttons != null)
@@ -30,4 +36,49 @@ public class SpawnAndEnable : MonoBehaviour
             Destroy(objectToSpawn);
         }
     }
+
+    public void EnablePlacementMode()
+    {
+        placementMode = true;
+
+        Debug.Log("Placement mode enabled. Click on a PolygonCollider2D to place the object.");
+    }
+
+    private void Update()
+    {
+        if (placementMode && Input.GetMouseButtonDown(0)) // Left mouse button
+        {
+            TryPlaceObject();
+        }
+    }
+
+    private void TryPlaceObject()
+    {
+        Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero);
+        if (hit.collider.gameObject.CompareTag("Obstacle"))
+        {
+            Debug.Log("It's an obstacle!");
+        }
+        else if (hit.collider != null && hit.collider is PolygonCollider2D)
+        {
+            Debug.Log("Placed on PolygonCollider2D: " + hit.collider.name);
+
+            if (objectToSpawn != null)
+                Instantiate(objectToSpawn, new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0f), Quaternion.identity);
+            // Optionally enable your buttons UI
+            if (buttons != null)
+                buttons.SetActive(true);
+
+            Shop.instance.ToggleShopMenu(); // Close the shop menu after buying
+
+            placementMode = false; // Stop placing after one object
+        }
+        else
+        {
+            Debug.Log("Mouse click did not hit a PolygonCollider2D.");
+        }
+    }
+
+
 }
