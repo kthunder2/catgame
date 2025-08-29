@@ -9,7 +9,9 @@ public class SpawnAndEnable : MonoBehaviour
     [Header("Object to enable")]
     public GameObject buttons;
 
-    private Vector3 targetPosition;
+    [Header("Object to enable")]
+    public GameObject RightWindow;
+    public GameObject LeftWindow;
 
     private bool placementMode = false; // Is the player currently placing?
 
@@ -77,6 +79,35 @@ public class SpawnAndEnable : MonoBehaviour
         else
         {
             Debug.Log("Mouse click did not hit a PolygonCollider2D.");
+        }
+    }
+
+    public void SpawnLeftWindow()
+    {
+        if (objectToSpawn != null)
+        {
+            // Instantiate at position (1, -1, 0) with default rotation
+            Instantiate(objectToSpawn, LeftWindow.transform.position, Quaternion.identity);
+            Shop.instance.ToggleShopMenu(); // Close the shop menu after buying
+        }
+
+        if (buttons != null)
+        {
+            buttons.SetActive(true);
+        }
+    }
+
+    public void SpawnRightWindow()
+    {
+        if (objectToSpawn != null)
+        {
+            // Instantiate at position (1, -1, 0) with default rotation
+            Instantiate(objectToSpawn, RightWindow.transform.position, Quaternion.identity);
+            Shop.instance.ToggleShopMenu(); // Close the shop menu after buying
+        }
+        if (buttons != null)
+        {
+            buttons.SetActive(true);
         }
     }
 
