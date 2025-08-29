@@ -61,6 +61,10 @@ public class CharacterAnimationController : MonoBehaviour
             {
                 Debug.Log("Mouse click did not hit any collider, character will not move");
             }
+            /*else if()
+            {
+
+            }*/
             else if (hitCollider.gameObject.CompareTag("Obstacle"))
             {
                 Debug.Log("It's an obstacle!");
