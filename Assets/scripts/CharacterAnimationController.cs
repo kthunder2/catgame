@@ -43,7 +43,7 @@ public class CharacterAnimationController : MonoBehaviour
     void HandleAnimation()
     {
         if (isMoving)
-            animator.Play("jump"); // Replace with your moving animation
+            animator.Play("jump");
         else
             animator.Play("idle");
     }
@@ -61,10 +61,10 @@ public class CharacterAnimationController : MonoBehaviour
             {
                 Debug.Log("Mouse click did not hit any collider, character will not move");
             }
-            /*else if()
+            else if(Shop.instance.isMenuOpen)
             {
-
-            }*/
+                Debug.Log("Shop menu is open, character will not move");
+            }
             else if (hitCollider.gameObject.CompareTag("Obstacle"))
             {
                 Debug.Log("It's an obstacle!");

@@ -12,6 +12,10 @@ public class Shop : MonoBehaviour
     public bool isMenuOpen = false;
     private GameObject currentOpenMenu = null;
 
+    private void Start()
+    {
+        instance = this;
+    }
     // Called when the main button is clicked
     public void ToggleShopMenu()
     {
