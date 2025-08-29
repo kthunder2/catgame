@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CharacterAnimationController : MonoBehaviour
@@ -7,31 +8,28 @@ public class CharacterAnimationController : MonoBehaviour
     [Header("Movement Settings")]
     public float moveSpeed = 1f;       // Movement speed
     public float moveThreshold = 0.1f; // Minimum distance to consider moving
+    public float autoMoveInterval = 3f; // Time between automatic target selections
+    public float idleChance = 0.3f;    // Chance to stay idle instead of moving
 
     private Vector3 targetPosition;
     private bool isMoving = false;
 
-    // New flags
     private bool manualMovementEnabled = false;
     private bool autoMovementEnabled = true;
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        targetPosition = transform.position; // Start at current position
+        targetPosition = transform.position;
+
+        if (autoMovementEnabled)
+            StartCoroutine(AutoMoveRoutine());
     }
 
     void Update()
     {
         if (manualMovementEnabled)
-        {
             CheckMouseClickRaycast();
-        }
-
-        if (autoMovementEnabled)
-        {
-            HandleAutomaticMovement(); // You should have your auto movement logic here
-        }
 
         HandleMovement();
         HandleAnimation();
@@ -44,9 +42,9 @@ public class CharacterAnimationController : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
             if (targetPosition.x < transform.position.x)
-                transform.localScale = new Vector3(-1, 1, 1); // Face left
+                transform.localScale = new Vector3(-1, 1, 1);
             else
-                transform.localScale = new Vector3(1, 1, 1);  // Face right
+                transform.localScale = new Vector3(1, 1, 1);
 
             if (Vector3.Distance(transform.position, targetPosition) <= moveThreshold)
                 isMoving = false;
@@ -66,35 +64,68 @@ public class CharacterAnimationController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            Collider2D hitCollider = Physics2D.OverlapPoint(mouseWorldPos);
-
-            if (hitCollider == null)
-            {
-                Debug.Log("Mouse click did not hit any collider, character will not move");
-            }
-            else if (Shop.instance.isMenuOpen)
-            {
-                Debug.Log("Shop menu is open, character will not move");
-            }
-            else if (hitCollider.gameObject.CompareTag("Obstacle"))
-            {
-                Debug.Log("It's an obstacle!");
-            }
-            else if (hitCollider is PolygonCollider2D)
-            {
-                Debug.Log("Mouse clicked on a 2D PolygonCollider2D: " + hitCollider.name);
-                targetPosition = new Vector3(mouseWorldPos.x, mouseWorldPos.y, transform.position.z);
-                isMoving = true;
-            }
-            else
-            {
-                Debug.Log("Mouse click did not hit a PolygonCollider2D, character will not move");
-            }
+            TrySetTarget(mouseWorldPos);
         }
     }
 
-    // Button functions
+    void TrySetTarget(Vector2 position)
+    {
+        Collider2D hitCollider = Physics2D.OverlapPoint(position);
+
+        if (hitCollider == null)
+        {
+            Debug.Log("No collider at position.");
+            return;
+        }
+        if (Shop.instance.isMenuOpen)
+        {
+            Debug.Log("Shop menu is open, character will not move");
+            return;
+        }
+        if (hitCollider.CompareTag("Obstacle"))
+        {
+            Debug.Log("Hit an obstacle!");
+            return;
+        }
+        if (hitCollider is PolygonCollider2D)
+        {
+            Debug.Log("Valid target: " + hitCollider.name);
+            targetPosition = new Vector3(position.x, position.y, transform.position.z);
+            isMoving = true;
+        }
+    }
+
+    // --- Automatic Movement ---
+    IEnumerator AutoMoveRoutine()
+    {
+        while (true)
+        {
+            if (autoMovementEnabled)
+            {
+                // Decide if we stay idle this interval
+                if (Random.value > idleChance)
+                {
+                    // Pick a random point in camera bounds
+                    Vector2 randomScreenPoint = new Vector2(
+                        Random.Range(0, Screen.width),
+                        Random.Range(0, Screen.height)
+                    );
+                    Vector2 worldPoint = Camera.main.ScreenToWorldPoint(randomScreenPoint);
+
+                    // Try set as target (only if PolygonCollider2D and valid)
+                    TrySetTarget(worldPoint);
+                }
+                else
+                {
+                    Debug.Log("Auto-movement idle this interval");
+                }
+            }
+
+            yield return new WaitForSeconds(autoMoveInterval);
+        }
+    }
+
+    // --- Button functions ---
     public void EnableManualMovement()
     {
         manualMovementEnabled = true;
@@ -107,10 +138,5 @@ public class CharacterAnimationController : MonoBehaviour
         manualMovementEnabled = false;
         autoMovementEnabled = true;
         Debug.Log("Automatic movement enabled, manual movement disabled");
-    }
-
-    void HandleAutomaticMovement()
-    {
-        // Your auto movement logic here
     }
 }
