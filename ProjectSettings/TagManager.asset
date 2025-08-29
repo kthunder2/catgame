@@ -8,6 +8,8 @@ TagManager:
   - furniture
   - windows
   - Obstacle
+  - leftwindow
+  - rightwindow
   layers:
   - Default
   - TransparentFX

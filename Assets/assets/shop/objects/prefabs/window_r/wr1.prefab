@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5109745345508957340}
   m_Layer: 6
   m_Name: wr1
-  m_TagString: Obstacle
+  m_TagString: rightwindow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
