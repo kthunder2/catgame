@@ -6970,6 +6970,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1c77c0ddf17e0604aa7a959e4d95b61d, type: 3}
   - {fileID: 21300000, guid: cccb781d18f4fbb4fa077a93aed9279e, type: 3}
   typeSpeed: 0.05
+  isActive: 1
 --- !u!1 &1931881627
 GameObject:
   m_ObjectHideFlags: 0
