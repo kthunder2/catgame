@@ -138,4 +138,11 @@ public class CharacterAnimationController : MonoBehaviour
         autoMovementEnabled = true;
         Debug.Log("Automatic movement enabled, manual movement disabled");
     }
+
+    public void DeleteCharacter()
+    {
+        StopAllCoroutines();
+        Destroy(gameObject);
+        
+    }
 }

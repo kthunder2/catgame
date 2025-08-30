@@ -84,9 +84,16 @@ public class SpawnAndEnable : MonoBehaviour
 
     public void SpawnLeftWindow()
     {
+        // Check and destroy any existing left window
+        GameObject existingLeft = GameObject.FindGameObjectWithTag("leftwindow");
+        if (existingLeft != null)
+        {
+            Destroy(existingLeft);
+        }
+
+        // Spawn new one
         if (objectToSpawn != null)
         {
-            // Instantiate at position (1, -1, 0) with default rotation
             Instantiate(objectToSpawn, LeftWindow.transform.position, Quaternion.identity);
             Shop.instance.ToggleShopMenu(); // Close the shop menu after buying
         }
@@ -99,12 +106,20 @@ public class SpawnAndEnable : MonoBehaviour
 
     public void SpawnRightWindow()
     {
+        // Check and destroy any existing right window
+        GameObject existingRight = GameObject.FindGameObjectWithTag("rightwindow");
+        if (existingRight != null)
+        {
+            Destroy(existingRight);
+        }
+
+        // Spawn new one
         if (objectToSpawn != null)
         {
-            // Instantiate at position (1, -1, 0) with default rotation
             Instantiate(objectToSpawn, RightWindow.transform.position, Quaternion.identity);
             Shop.instance.ToggleShopMenu(); // Close the shop menu after buying
         }
+
         if (buttons != null)
         {
             buttons.SetActive(true);
