@@ -3776,6 +3776,7 @@ MonoBehaviour:
   cat_menu: {fileID: 197553850}
   furniture_menu: {fileID: 1712114270}
   windows_menu: {fileID: 214855697}
+  mainCamera: {fileID: 519420031}
   isMenuOpen: 0
 --- !u!1 &839366783
 GameObject:
