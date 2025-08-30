@@ -19,15 +19,19 @@ public class Shop : MonoBehaviour
     // Called when the main button is clicked
     public void ToggleShopMenu()
     {
-        isMenuOpen = !isMenuOpen;
-        categories.SetActive(isMenuOpen);
-
-        // If closing the main menu, also close any open submenus
-        if (!isMenuOpen && currentOpenMenu != null)
+        if(!TextDisplay.instance.isActive)
         {
-            currentOpenMenu.SetActive(false);
-            currentOpenMenu = null;
+            isMenuOpen = !isMenuOpen;
+            categories.SetActive(isMenuOpen);
+
+            // If closing the main menu, also close any open submenus
+            if (!isMenuOpen && currentOpenMenu != null)
+            {
+                currentOpenMenu.SetActive(false);
+                currentOpenMenu = null;
+            }
         }
+        
     }
 
     // Call this from a button and pass the menu to toggle
